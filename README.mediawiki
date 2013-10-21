@@ -1,7 +1,7 @@
 =rockit=
 
 ==Description==
-This is a set of tools to build model rocket models with [[http://www.openscad.org/ OpenSCAD]] for the purposes of 3D printing.
+This is a set of tools to build model rocket models with [[OpenSCAD http://www.openscad.org/]] for the purposes of 3D printing.
 
 ==Images==
 <img src="https://raw.github.com/vishnubob/rockit/master/images/rocket_parts.png" />
@@ -10,11 +10,12 @@ Examples of some rockit parts:
 <p />
 <img src="https://raw.github.com/vishnubob/rockit/master/images/rocket_tube_cura.png" />
 <p />
-[[https://github.com/daid/Cura Cura]] preparing 24 rockit tubes for 3D printing:
+[[Cura https://github.com/daid/Cura]] preparing 24 rockit tubes for 3D printing:
 
 
 ==Author==
 Witten by Giles Hall (C) 2012-2013
 
-Rockit, the model rocket construction kit, should not to be confused by [[http://en.wikipedia.org/wiki/Rockit Rockit]], an excellent electro track from 1983 by [[http://en.wikipedia.org/wiki/Herbie_Hancock Herbie Hancock]]:
+Rockit, the model rocket construction kit, should not to be confused by [[Rockit http://en.wikipedia.org/wiki/Rockit]], an excellent electro track from 1983 by [[Herbie Hancock http://en.wikipedia.org/wiki/Herbie_Hancock]]:
+
 <iframe width="420" height="315" src="//www.youtube.com/embed/GHhD4PD75zY" frameborder="0" allowfullscreen></iframe>
