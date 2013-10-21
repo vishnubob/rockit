@@ -1,8 +1,18 @@
 =rockit=
 
+==Description==
 This is a set of tools to build model rocket models with OpenSCAD for the 
-purposes of 3D printing, witten by Giles Hall.
+purposes of 3D printing.
 
+==Images==
+<p />
+Examples of some rockit parts:
+<p />
 <img src="https://raw.github.com/vishnubob/rockit/master/images/rocket_parts.png" />
 <p />
+Cura preparing 24 rockit tubes for 3D printing:
+<p />
 <img src="https://raw.github.com/vishnubob/rockit/master/images/rocket_tube_cura.png" />
+
+==Author==
+Witten by Giles Hall (C) 2012-2013
