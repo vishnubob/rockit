@@ -7,6 +7,17 @@
 
 function in2mm(in) = in / 0.0393701;
 
+
+/////////////////
+// Rocket Parts
+// Some of these are mutually exclusive
+engine_holder_enabled = 0;
+body_enabled = 0;
+fins_enabled = 0;
+collar_enabled = 0;
+guide_enabled = 0;
+nosecone_enabled = 0;
+
 /////////////////
 // Engine Dimensions
 // http://www2.estesrockets.com/pdf/Estes_Model_Rocket_Engines.pdf
@@ -43,7 +54,6 @@ collar_height = in2mm(.25);
 
 /////////////////
 // Engine Holder
-engine_holder_enabled = 1;
 engine_holder_overhang = 20;
 engine_holder_inner_dia = engine_dia + engine_pad;
 engine_holder_outer_dia = engine_dia + wall_thickness;
@@ -53,7 +63,6 @@ engine_holder_firewall_length = in2mm(.25);
 
 /////////////////
 // Body
-body_enabled = 1;
 //body_height = engine_holder_length + engine_holder_offset + engine_holder_offset + in2mm(.2);
 body_height = engine_holder_length + engine_holder_offset + engine_holder_offset;
 body_inner_dia = engine_dia + engine_gap;
@@ -61,7 +70,6 @@ body_outer_dia = body_inner_dia + wall_thickness;
 
 /////////////////
 // Fins
-fins_enabled = 1;
 fin_count = 6;
 fin_span = body_outer_dia * 3.5;
 fin_thickness = wall_thickness;
@@ -74,19 +82,23 @@ fin_height = (body_height - fin_offset) * fin_coverage;
 
 /////////////////
 // Collar
-collar_enabled = 1;
-collar_overlap = collar_height * .5;
+collar_overlap = collar_height;
 collar_fit = .990;
 collar_outer_dia = body_inner_dia * collar_fit;
 collar_inner_dia = collar_outer_dia - wall_thickness;
 
 /////////////////
 // Guide
-guide_enabled = 1;
 guide_inner_dia = 4.6;
 guide_outer_dia = guide_inner_dia + 1;
 guide_height = in2mm(2);
 guide_offset = in2mm(.5);
+
+/////////////////
+// Nosecone
+nosecone_height = body_height;
+nosecone_inner_dia = body_inner_dia;
+nosecone_outer_dia = body_outer_dia;
 
 /////////////////
 // Quality
@@ -131,7 +143,7 @@ module tube(name, length, outer_dia, inner_dia)
 
 module tube2(name, length, outer_dia1, inner_dia1, outer_dia2, inner_dia2)
 {
-    echo(str("Tube2 [", name, "]: ", length, "mm len, ", outer_dia, "mm OD, ", inner_dia, "mm ID"));
+    echo(str("Tube2 [", name, "]: ", length, "mm len, ", outer_dia1, "mm OD1, ", inner_dia1, "mm ID1", outer_dia2, "mm OD2, ", inner_dia2, "mm ID2"));
     difference()
     {
         // outer
@@ -145,6 +157,7 @@ module make_guide()
 {
     if (guide_enabled)
     {
+        echo(str("Making guide"));
 		rotate([0, 0, 180 / fin_count]) 
         translate([body_outer_dia / 2 + guide_inner_dia / 2, 0, guide_offset])
         tube("guide", guide_height, guide_outer_dia, guide_inner_dia);
@@ -155,6 +168,7 @@ module make_fins()
 {
     if (fins_enabled)
     {
+        echo(str("Making fins"));
 		for (i = [0:fin_count - 1])
         {
             fin(i * (360 / fin_count), 0);
@@ -166,6 +180,7 @@ module make_collar()
 {
     if (collar_enabled)
     {
+        echo(str("Making collar"));
         translate([0, 0, body_height - collar_overlap]) 
         tube("collar", collar_height + collar_overlap, collar_outer_dia, collar_inner_dia);
     }
@@ -175,6 +190,7 @@ module make_engine_holder()
 {
     if (engine_holder_enabled)
     {
+        echo(str("Making engine holder"));
         union()
         {
             // engine offset
@@ -194,19 +210,32 @@ module make_body()
 {
     if (body_enabled)
     {
+        echo(str("Making body"));
         tube("body", body_height, body_outer_dia, body_inner_dia);
     }
 }
 
-module make_rocket()
+module make_nosecone()
+{
+    if (nosecone_enabled)
+    {
+        echo(str("Making nosecone"));
+        tube("nosecone", nosecone_height, nosecone_inner_dia, nosecone_outer_dia);
+    }
+}
+
+module make_rockit()
 {
     union()
     {
-        // outer
         make_body();
         make_collar();
         make_guide();
         make_fins();
         make_engine_holder();
+        make_nosecone();
     }
 }
+
+
+
