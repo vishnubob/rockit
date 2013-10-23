@@ -1,3 +1,2 @@
 include <rockit.scad>;
-nosecone_enabled = 1;
-make_rockit();
+make_rockit_nosecone();
