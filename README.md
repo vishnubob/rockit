@@ -36,42 +36,50 @@ Rockit requires [OpenSCAD](http://www.openscad.org/downloads.html), [Python](htt
 Getting Started
 ---------------
 1. [Download Rockit](https://github.com/vishnubob/rockit/archive/master.zip), unpack the archive if necessary
-2. Open up OpenSCAD and load scad/stub.scad
+2. Open up OpenSCAD and load [scad/stub.scad](https://github.com/vishnubob/rockit/blob/master/scad/stub.scad)
 <img src="http://i.imgur.com/C7UpA5E.png" alt="Step 1" style="width: 600px;"/>
 3. Add the following code:
+
 ```jacascript
 import <rockit.scad>;
 make_rockit_tail();
 ```
+
 <img src="http://i.imgur.com/t84cv5ul.png" alt="Step 2" style="width: 600px;"/>
 4. Four fins are boring, how about 3?
+
 ```jacascript
 import <rockit.scad>;
 fin_count = 3; 
 make_rockit_tail();
 ```
-<img src="http://i.imgur.com/mIMIzeU.png") alt="Step 2" style="width: 600px;"/>
+
+<img src="http://i.imgur.com/mIMIzeU.png" alt="Step 2" style="width: 600px;"/>
 5. How about 5?
+
 ```jacascript
 import <rockit.scad>;
 fin_count = 5; 
 make_rockit_tail();
 ```
+
 <img src="http://i.imgur.com/XkH7idu.png" alt="Step 3" style="width: 600px;"/>
 6. What about 5 fins with a 2.5mm deflection?
+
 ```jacascript
 import <rockit.scad>;
 fin_count = 5; 
 fin_deflection = 2.5;
 make_rockit_tail();
 ```
+
 <img src="http://i.imgur.com/K0cxxr0.png" alt="Step 4" style="width: 600px;"/>
 
 Resources for Learning More
 ---------------------------
-- To get more of a feel of what is possible, examine scad/rockit.scad.
-- [Documentation]([http://en.wikibooks.org/wiki/OpenSCAD_User_Manual/The_OpenSCAD_Language]  is available on the OpenSCAD programming language.
-- Check out the Makefile.  You can build STL or PNG files by issuing a '''make''' from the command line from within the rockit directory.
+- To get a feel of how rockit works, check out [scad/rockit.scad](https://github.com/vishnubob/rockit/blob/master/scad/rockit.scad)
+- [Documentation](http://en.wikibooks.org/wiki/OpenSCAD_User_Manual/The_OpenSCAD_Language)  is available on the OpenSCAD programming language.
+- Check out the [Makefile](https://github.com/vishnubob/rockit/blob/master/Makefile).  You can build STL or PNG files by issuing a '''make''' from the command line from within the rockit directory.
 
 Credits
 -------
