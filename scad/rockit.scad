@@ -8,7 +8,8 @@
 /////////////////
 // Functions 
 function in2mm(in) = in / 0.0393701;
-function stage_offset() = (fin_sym_flag ? fin_endchord : 0) + (fin_skirt_enabled ? fin_skirt_height : 0);
+//function stage_offset() = (fin_sym_flag ? fin_endchord : 0) + (fin_skirt_enabled ? fin_skirt_height : 0);
+function stage_offset() = 0;
 
 /////////////////
 // Engine Dimensions
@@ -67,11 +68,12 @@ body_standoff_air_gap = body_standoff_neck_dia * .61;
 
 /////////////////
 // Fins
-fin_count = 6;
+fin_count = 4;
 fin_dia = body_outer_dia * 3.5;
 fin_thickness = wall_thickness;
 fin_endchord = body_height * .21;
-fin_sym_flag = 1;
+//fin_sym_flag = 1;
+fin_sym_flag = 0;
 fin_offset = 0;
 fin_coverage = .99;
 fin_height = (body_height - fin_offset) * fin_coverage;
@@ -110,7 +112,7 @@ nosecone_outer_dia = body_outer_dia;
 
 /////////////////
 // Post Globals
-enable_standoff = (stage_offset() > 0)
+enable_standoff = (stage_offset() > 0);
 
 module make_fin(name, angle, deflection)
 {
@@ -238,7 +240,8 @@ module make_fins()
         for (i = [0:fin_count - 1])
         {
             make_fin(i + 1, i * (360 / fin_count), fin_deflection);
-            make_fin_standoff(i + 1, i * (360 / fin_count), fin_deflection);
+            if (stage_offset())
+                make_fin_standoff(i + 1, i * (360 / fin_count), fin_deflection);
         }
     }
 }
@@ -276,7 +279,7 @@ module make_body()
         // body
         tube("body", body_height, body_outer_dia, body_inner_dia);
         // standoff
-        if (body_standoff_enabled)
+        if (stage_offset())
         {
             // base
             translate([0, 0, -stage_offset()])
