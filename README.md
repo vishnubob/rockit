@@ -112,5 +112,5 @@ Credits
 -------
 - Rockit is written and maintained by Giles Hall (C) 2012-2013
 - Original fin design based on [Thingiverse](http://www.thingiverse.com/) [Object #26508 (Simple model rocket tail fins)](http://www.thingiverse.com/thing:26508), an *.scad* script written by [Lutz Paelke](http://www.thingiverse.com/lpaelke/designs) and published on Jul 9, 2012.
-- Rockit, the model rocket construction kit, should not to be confused by [Rockit](http://en.wikipedia.org/wiki/Rockit), an excellent electro track from 1983 by [Herbie Hancock](http://en.wikipedia.org/wiki/Herbie_Hancock)
+- [Rockit](https://github.com/vishnubob/rockit), the model rocket construction kit, should not to be confused by [Rockit](http://en.wikipedia.org/wiki/Rockit), an excellent electro track from 1983 by [Herbie Hancock](http://en.wikipedia.org/wiki/Herbie_Hancock)
 
