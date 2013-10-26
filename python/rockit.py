@@ -2,7 +2,7 @@
 # Giles Hall (C) 2013
 import traceback
 import pprint
-from scad import *
+from solid import *
 
 def in2mm(inches):
     return inches / 0.0393701
@@ -11,208 +11,70 @@ class RockitPart(dict):
     Defaults = {}
     Name = ''
 
-    def __init__(self, bound=None, **kw):
+    def __init__(self, **kw):
         self.name = self.Name or self.__class__.__name__
-        self.bound = bound
+        self.__ns = None
         _dct = self.Defaults.copy()
         _dct.update(kw)
         super(RockitPart, self).__init__(**_dct)
 
     def copy(self):
-        return self.__class__(bound=self.bound, **super(RockitPart, self).copy())
+        newcopy = self.__class__(self)
+        newcopy.bind(self.__ns)
+        return newcopy
 
-    def __repr__(self):
-        code = "%s(**%s)" % (self.__class__.__name__, str(dict(self)))
-        return code
+    def bind(self, ns):
+        self.__ns = ns
 
-    def bind(self, ns=None):
-        self.bound = ns
-
-    def localize_key(self, key):
-        if key.startswith(self.name + '_') or key.startswith(self.name + '.'):
-            return key[len(self.name) + 1:]
-        return key
+    def lookup(self, key):
+        return self.__ns[key]
+        
+    def build(self):
+        pass
 
     def __getattr__(self, key):
-        return super(RockitPart, self).__getitem__(key)
+        if key not in self:
+            raise AttributeError, key
+        return self[key]
 
     def __setattr__(self, key, val):
-        if super(RockitPart, self).__contains__(key):
-            super(RockitPart, self).__setitem__(key, val)
+        if key in self:
+            self[key] = val
         else:
             super(RockitPart, self).__setattr__(key, val)
 
-    def __contains__(self, key):
-        key = self.localize_key(key)
-        return super(RockitPart, self).__contains__(key)
+class RockitParts(object):
+    def __init__(self, *parts):
+        self.parts = list(parts)
+        self.refresh_catalog()
 
-    def __getitem__(self, okey):
-        key = self.localize_key(okey)
-        print "__getitem__", okey
-        ret = super(RockitPart, self).__getitem__(key)
-        if self.bound:
-            print "bound"
-            if type(ret) == str:
-                try:
-                    print "Trying", ret
-                    ret = eval(ret, self.bound)
-                except:
-                    pass
-        return ret
+    def refresh_parts_catalog(self):
+        self.catalog = {}
+        for part in self.parts:
+            part.bind(self)
+            self.catalog[part.name] = part
 
-    def __contains__(self, key):
-        key = self.localize_key(key)
-        return super(RockitPart, self).__contains__(key)
-
-    def __setitem__(self, key, item):
-        key = self.localize_key(key)
-        super(RockitPart, self).__setitem__(key, item)
-
-    def fq_keys(self):
-        return [self.name + '_' + key for key in self.keys()]
-
-    def scad_variables(self):
-        banner = '#' * 80 + '\n'
-        scad = banner + "## %s - Variables\n" % self.__class__.__name__
-        scad += str.join('', ["%s=%s;\n" % (key, val) for (key, val) in self.items()])
-        scad += '\n'
-        return scad
-
-    def scad_modules(self):
-        banner = '#' * 80 + '\n'
-        scad = banner + "## %s - Modules\n" % self.__class__.__name__
-        scad += '\n'
-        return scad
-
-    def scad(self):
-        try:
-            return scad_variables() + scad_modules()
-        except:
-            traceback.print_exc()
-            raise
-
-class RockitParts(RockitPart):
-    def __init__(self, *args, **kw):
-        super(RockitParts, self).__init__(*args, **kw)
-        print self
-        self.update({name: self[name]() for name in self if not isinstance(self[name], RockitPart) and type(self[name]) not in (str,int,float,list)})
-
-    def scad(self, parts=[]):
-        #print
-        #print [(key, self[key]) for key in self]
-        #print
-        scad = ''
-        parts = parts or self.keys()
-        for partname in parts:
-            part = self[partname]
-            scad += part.scad_variables()
-            self["current_part"] = part
-            scad += eval("current_part.scad_module()", self.ns(), locals())
-        return scad
-
-    def bind(self, ns=None):
-        for pname in self:
-            self[pname].bind(ns)
-        super(RockitParts, self).bind(ns)
-
-    def fq_keys(self):
-        ret = []
-        map(ret.extend, [part.fq_keys() for part in self.values()])
-        return ret
-
-    def symbol_lock(self, symbol, ns):
-        if type(symbol) != str:
-            return
-        while 1:
-            try:
-                try:
-                    new_sym = eval(symbol, ns)
-                except:
-                    break
-                if new_sym != symbol:
-                    symbol = new_sym
-                else:
-                    break
-            except:
-                pass
-        return symbol
-
-    def ns(self):
-        ns = {key: self[key] for key in self.fq_keys()}
-        ns = self.__class__(**ns)
-        ns.update({key: self[key] for key in self.keys()})
-        resolved = set([key for key in ns if type(ns[key]) != str])
-        unresolved = set(ns.keys()).difference(resolved)
-        loopcnt = 0
-        while unresolved:
-            loopcnt += 1
-            ur = len(unresolved)
-            for key in unresolved:
-                _ns = ns.copy()
-                _ns.update(globals())
-                _ns.update(locals())
-                self.bind(_ns)
-                try:
-                    print "EVAL: %s = eval(%s)" % (key, ns[key])
-                    if type(_ns[key]) == str:
-                        ret = eval(str(_ns[key]), _ns)
-                        ns[key] = ret
-                        print "ret: ", ret
-                        if type(ret) != str:
-                            print "EVAL: %s = %s = eval(%s)" % (key, ret, ns[key])
-                    resolved.add(key)
-                    #print "ret", key, ret
-                except Exception, e:
-                    #print
-                    #print "eval", key, '"%s"' % _ns[key]
-                    #print
-                    traceback.print_exc()
-                    print e
-                    print
-                    continue
-                print
-                unresolved = unresolved.difference(resolved)
-            #pprint.pprint(ns)
-            #print
-            if (ur == len(unresolved)):
-                print "Early Break!"
-                break
-        self.bind()
-        ns = {key: _ns[key] for key in ns}
-        msg = "Loop: %d passed with %d resolved, %d unresolved" % (loopcnt, len(resolved), len(unresolved))
-        print unresolved
-        print msg
-        return ns
-
-    def get_part(self, key):
-        for partname in self:
-            part = super(RockitParts, self).__getitem__(partname)
-            if partname == key.split('_')[0]:
-                print "get_part", partname, key
-                return part
-        raise KeyError, key
-
-    def has_part(self, key):
-        try:
-            self.get_part(key)
-        except KeyError:
-            return False
-        return True
+    def add_part(self, part):
+        self.parts.append(part)
+        self.refresh_catalog()
 
     def __getitem__(self, key):
-        if super(RockitParts, self).__contains__(key):
-            return super(RockitParts, self).__getitem__(key)
-        return self.get_part(key)[key]
+        keys = key.split('.')
+        attr = keys[-1]
+        part = None
+        for key in keys[:-1]:
+            if part == None:
+                part = self.catalog[key]
+            else:
+                part = part[key]
+        return part[attr]
 
-    def __contains__(self, key):
-        return self.has_part(key)
-
-    def __setitem__(self, key, item):
-        try:
-            part = self.get_part(key)
-            part[key] = item
-        except KeyError:
-            super(RockitParts, self).__setitem__(key, item)
+class RockitGlobal(RockitPart):
+    Name = 'global'
+    Defaults = {
+        "min_overlap": .001,
+        "circle_segments": 30
+    }
 
 class RockitEngine(RockitPart):
     Name = 'engine'
@@ -252,27 +114,26 @@ class EngineHolder(RockitPart):
     Name = 'engineholder'
     Defaults = {
         "length": in2mm(3.75),
-        "inner_dia": "engine.dia * engine.fit",
-        "outer_dia": "engineholder.inner_dia + body.thickness",
         "firewall_length": in2mm(.25),
-        "engineholder_offset": "collar.height",
     }
 
-class RockitGlobal(RockitPart):
-    Name = 'global'
-    Defaults = {
-        "min_overlap": .001,
-        "circle_segments": 30
-    }
+    @property
+    def offset(self):
+        return self.lookup("collar.height")
 
 class RockitBody(RockitPart):
     Name = 'body'
     Defaults = {
         "thickness": 2,
-        "height": "engineholder.length + 2 * engineholder.offset",
         "inner_dia": "engine.dia + engine.gap",
         "outer_dia": "body.inner_dia + body.thickness",
     }
+
+    @property
+    def length(self):
+        if "length" not in self:
+            
+        "height": "engineholder.length + 2 * engineholder.offset",
 
 class RockitBodyStandoff(RockitPart):
     Name = 'bodystandoff'
