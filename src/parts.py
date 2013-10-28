@@ -252,8 +252,6 @@ class RockitTail(RockitPart):
         parts = []
         # rocket body 
         parts.append(self.rocket.body.build())
-        # collar 
-        parts.append(self.rocket.collar.build())
         # engine mount
         parts.append(self.rocket.engine_mount.build())
         # fins
@@ -306,7 +304,10 @@ class RockitBody(RockitPart):
         return self.rocket.body.inner_dia + self.rocket.body.width
 
     def build(self):
-        return tube("body", self.height, self.outer_dia, self.inner_dia, self.rocket.constants.circle_segments)
+        return union()(
+            tube("body", self.height, self.outer_dia, self.inner_dia, self.rocket.constants.circle_segments),
+            self.rocket.collar.build(),
+        )
 
 class RockitConstants(RockitPart):
     Name = 'constants'

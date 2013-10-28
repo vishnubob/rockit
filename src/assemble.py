@@ -43,21 +43,50 @@ def make_collar_test():
     fn = "collar_test"
     save(scad, fn)
 
-def make_tail(oride=None):
+def make_mini_nosecone(oride=None):
     override = oride or dict()
-    #rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, override=override)
+    rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, RockitNosecone, override=override)
+    pprint.pprint(rocket)
+    scad = rocket.nosecone.build()
+    name = "mini_nosecone"
+    save(scad, name)
+
+def make_mini_tube(oride=None):
+    override = oride or dict()
+    rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, RockitNosecone, override=override)
+    pprint.pprint(rocket)
+    scad = rocket.body.build()
+    name = "mini_tube"
+    save(scad, name)
+
+def make_mini_tail(oride=None):
+    override = oride or dict()
+    rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, override=override)
+    pprint.pprint(rocket)
+    scad = rocket.tail.build()
+    name = "mini_tail"
+    save(scad, name)
+
+def make_standard_tail(oride=None):
+    override = oride or dict()
     rocket = Rockit(RockitConstants, Rockit_Standard_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, override=override)
     pprint.pprint(rocket)
     scad = rocket.tail.build()
-    name = "tail"
+    name = "standard_tail"
     save(scad, name)
 
-def make_nosecone(oride=None):
+def make_standard_tube(oride=None):
     override = oride or dict()
-    #rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, override=override)
+    rocket = Rockit(RockitConstants, Rockit_Standard_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, RockitNosecone, override=override)
+    pprint.pprint(rocket)
+    scad = rocket.body.build()
+    name = "standard_tube"
+    save(scad, name)
+
+def make_standard_nosecone(oride=None):
+    override = oride or dict()
     rocket = Rockit(RockitConstants, Rockit_Standard_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, RockitNosecone, override=override)
     pprint.pprint(rocket)
     scad = rocket.nosecone.build()
-    name = "nosecone"
+    name = "standard_nosecone"
     save(scad, name)
-
