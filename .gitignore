@@ -1,4 +1,6 @@
+stl
 stl/*
 *.pyc
 *.swp
 *DS_Store*
+build

@@ -1,6 +1,9 @@
 // Rockit - Model Rocket Construction Kit
-//
 // Giles Hall (C) 2012,2013
+//
+// This is the original file I used to make custom rockets before I realized I needed
+// more functionality from python+scad, and ported this over into the rockit python package.
+// I've left it here for posterity.
 //
 // Tail fin code based on:
 // - Lutz Paelke (lpaelke) - http://www.thingiverse.com/thing:26508/
@@ -103,18 +106,6 @@ guide_inner_dia = 4.6;
 guide_outer_dia = guide_inner_dia + 1;
 guide_height = in2mm(2);
 guide_offset = in2mm(.5);
-
-/////////////////
-// Nosecone
-nosecone_height = body_height;
-nosecone_outer_dia = body_outer_dia;
-nosecone_inner_dia = body_inner_dia;
-nosecone_outer_rad = nosecone_outer_dia / 2;
-nosecone_inner_rad = nosecone_inner_dia / 2;
-nosecone_length = body_length;
-nosecone_taper = 0.125;
-
-
 
 /////////////////
 // Post Globals
@@ -299,39 +290,6 @@ module make_body()
                         circle(r=body_standoff_neck_dia / 2, $fn=circle_segments);
         }
     }
-}
-
-module make_nosecone()
-{
-    echo(str("Making nosecone"));
-    union()
-    {
-        // http://en.wikipedia.org/wiki/Nose_cone_design#Conical
-        // y = xR / L
-        steps = 100;
-        R = body_outer_dia / 2;
-        L = nosecone_length;
-        x = L - collar_height;
-        points = [];
-        for (y = [0:steps])
-        {
-            polygon(points=[
-            
-        polygon(
-            translate ([0, 0, 15]) 
-                scale([1, 1, length/(body_inner_dia / 2)]) 
-                    difference() 
-                    {
-                        sphere(r=(body_inner_dia / 2), $fn=circle_segments);
-                        translate ([0, 0, -(body_inner_dia / 4)]) 
-                            cube(size=[nosecone_inner_dia,nosecone_inner_dia,nosecone_inner_dia / 2], center=true);
-                    }
-    }
-}
-
-module make_rockit_nosecone()
-{
-    make_nosecone();
 }
 
 module make_rockit_tail()

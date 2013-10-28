@@ -1,108 +1,10 @@
 # Rockit - Model Rocket Construction Kit
 # Giles Hall (C) 2013
-import math
-import time
-import os
-import tempfile
-import pprint
 from solid import *
+from . rockit import *
+from . nosecone import *
 
 CIRCLE_SEGMENTS = 200
-
-# scad
-def tube(name, height, outer_dia, inner_dia, segments=None):
-    msg = "Tube [%s]: Dia: inner=%.4f outer=%.4f, Height: %.4f" % (name, inner_dia, outer_dia, height)
-    print msg
-    return difference() (
-        cylinder(h=height, r=outer_dia / 2.0, segments=segments),
-        cylinder(h=height, r=inner_dia / 2.0, segments=segments)
-    )
-
-def tube2(name, height, outer_dia1, inner_dia1, outer_dia2, inner_dia2, segments=None):
-    msg = "Tube2 [%s]: Dia1: inner=%.4f outer=%.4f, Dia2: inner=%.4f outer=%.4f, Height: %.4f" % (name, inner_dia1, outer_dia1, inner_dia2, outer_dia2, height)
-    print msg
-    return difference() (
-        cylinder(h=height, r1=outer_dia1 / 2.0, r2=outer_dia2 / 2.0, segments=segments),
-        cylinder(h=height, r1=inner_dia1 / 2.0, r2=inner_dia2 / 2.0, segments=segments),
-    )
-
-def save_stl(scadfn, stlfn):
-    msg = "Converting SCAD to STL: %s -> %s" % (scadfn, stlfn)
-    print msg
-    cmd = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -m make -o %s %s" % (stlfn, scadfn)
-    os.system(cmd)
-
-def save_scad(scad, scadfn):
-    msg = "Generating SCAD file: %s" % scadfn
-    print msg
-    scad = scad_render(scad)
-    f = open(scadfn, 'w')
-    f.write(scad)
-    f.close()
-
-def save(scad, name):
-    scadfn = name + ".scad"
-    stlfn = name + ".stl"
-    save_scad(scad, scadfn)
-    save_stl(scadfn, stlfn)
-
-def in2mm(inches):
-    return inches / 0.0393701
-
-def default(func):
-    def _default(self, *args, **kwargs):
-        if func.func_name in self and self[func.func_name] != None:
-            return self[func.func_name]
-        return func(self, *args, **kwargs)
-    return property(_default)
-
-class cproperty(property):
-    def __get__(self, cls, owner):
-        return self.fget.__get__(None, owner)()
-
-class RockitObject(dict):
-    def __getattr__(self, key):
-        if key in self and self[key] != None:
-            return self[key]
-        return super(RockitObject, self).__getattribute__(key)
-
-    def __setattr__(self, key, val):
-        #print self.__class__.__name__, "SETATTR", key, val, key in self
-        if key in self:
-            self[key] = val
-            return
-        super(RockitObject, self).__setattr__(key, val)
-
-class Rockit(RockitObject):
-    def __init__(self, *parts, **kw):
-        _dct = {part.name: part(rocket=self) for part in parts}
-        super(Rockit, self).__init__(_dct)
-        self.override(kw.get("override", {}))
-
-    def override(self, config):
-        for (key, val) in config.items():
-            keys = key.split('.')
-            obj = self
-            for _key in keys[:-1]:
-                obj = getattr(obj, _key)
-            setattr(obj, keys[-1], val)
-
-class RockitPart(RockitObject):
-    Defaults = {"rocket": None}
-    Name = ''
-
-    def __init__(self, **kw):
-        _dct = self.Defaults.copy()
-        _dct.update(kw)
-        super(RockitPart, self).__init__(**_dct)
-
-    @cproperty
-    @classmethod
-    def name(cls):
-        return cls.Name or cls.__name__
-
-    def build(self):
-        return ''
 
 class RockitEngine(RockitPart):
     Name = 'engine'
@@ -120,14 +22,14 @@ class RockitEngine(RockitPart):
 
 class Rockit_Mini_Engine(RockitEngine):
     Defaults = {
-        "fit": 1.075,
+        "fit": 1.08,
         "height": in2mm(1.75),
         "dia": in2mm(.5),
     }
 
 class Rockit_Standard_Engine(RockitEngine):
     Defaults = {
-        "fit": 1.05,
+        "fit": 1.08,
         "height": in2mm(2.75),
         "dia": in2mm(.69),
     }
@@ -414,52 +316,53 @@ class RockitConstants(RockitPart):
         "circle_segments": CIRCLE_SEGMENTS,
     }
 
-def engine_mount_test():
-    override = {}
-    override["engine_mount.height"] = 10
-    override["engine_mount.taper_height"] = 0
-    rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, override=override)
-    pprint.pprint(rocket)
-    f = open("engine_mount_test.scad", 'w')
-    scad = rocket.engine_mount.build()
-    f.write(scad_render(scad))
+class RockitNosecone(RockitPart):
+    Name = 'nosecone'
 
-def make_engine_panel():
-    override = {}
-    override["engine_mount.height"] = 10
-    override["engine_mount.taper_height"] = 0
-    #rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, override=override)
-    rocket = Rockit(RockitConstants, Rockit_Standard_Engine, RockitEngineMount, RockitBody, RockitCollar, override=override)
-    slist = []
-    for (idx, x) in enumerate(range(4)):
-        x += 4
-        x = 4 / 100.0 + (.005 * idx) + 1
-        print x
-        rocket.engine.fit = x
-        pprint.pprint(rocket)
-        scad = rocket.engine_mount.build()
-        scad = translate([idx * rocket.engine_mount.outer_dia * 1.1,0,0])(scad)
-        slist.append(scad)
-    scad = union()(slist)
-    f = open("engine_mount_panel.scad", 'w')
-    f.write(scad_render(scad))
+    Defaults = {
+        "height": None,
+        "width": None,
+        "inner_dia": None,
+        "outer_dia": None,
+        "mount_height": None,
+        "steps": 100,
+    }
 
-def make_collar_test():
-    rocket = Rockit(RockitConstants, RockitEngineMount, Rockit_Mini_Engine, RockitBody, RockitCollar, RockitCollarTest)
-    rocket.body.height = 10
-    rocket.collar.height = 5
-    pprint.pprint(rocket)
-    scad = rocket.collar_test.build()
-    fn = "collar_test"
-    save(scad, fn)
-#make_collar_test()
+    @default
+    def height(self):
+        return self.rocket.body.height
 
-def make_tail(oride=None):
-    override = oride or dict()
-    rocket = Rockit(RockitConstants, Rockit_Mini_Engine, RockitEngineMount, RockitBody, RockitCollar, RockitTail, RockitFin, RockitLaunchLug, override=override)
-    pprint.pprint(rocket)
-    scad = rocket.tail.build()
-    name = "tail"
-    save(scad, name)
-make_tail()
+    @default
+    def width(self):
+        return self.rocket.body.width
+
+    @default
+    def inner_dia(self):
+        return self.rocket.body.inner_dia
+
+    @default
+    def outer_dia(self):
+        return self.rocket.body.outer_dia
+
+    @default
+    def mount_height(self):
+        return self.rocket.collar.height + 1
+
+    def build(self):
+        points = elliptical_nosecone_func(height=self.height, width=self.width, diameter=self.outer_dia, steps=self.steps)
+        import pprint
+        pprint.pprint(points)
+        #return rotate_extrude(convexity=10, segments=self.rocket.constants.circle_segments)( rotate([0, 0, -90])( polygon(points)))
+        return union()(
+            rotate_extrude(convexity=10, segments=self.rocket.constants.circle_segments)( rotate([0, 0, -90])( polygon(points))),
+            translate([0, 0, -self.mount_height])(
+                translate([0, -self.inner_dia / 2.0 + self.rocket.constants.min_overlap, 0])(
+                    rotate([-90, 0, 0])(
+                        cylinder(h=self.inner_dia, r=self.rocket.body.width / 2.0, segments=self.rocket.constants.circle_segments),
+                    )),
+                translate([self.inner_dia / 2.0 - self.rocket.constants.min_overlap, 0, 0])(
+                    rotate([0, -90, 0])(
+                        cylinder(h=self.inner_dia, r=self.rocket.body.width / 2.0, segments=self.rocket.constants.circle_segments),
+                    )),
+            ))
 
