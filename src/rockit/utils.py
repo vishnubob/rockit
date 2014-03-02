@@ -47,7 +47,9 @@ def render_crosshairs(length=25, width=1, height=1, rad=2):
         ])
     return scad
 
-def save_json(obj, json_fn):
+def save_json(obj, json_fn, lazy=True):
+    if os.path.exists(json_fn) and lazy:
+        return
     msg = "saving %s" % json_fn
     logger.info(msg)
     with open(json_fn, 'w') as fh:
@@ -62,25 +64,33 @@ def load_json(json_fn):
     obj = json.loads(content)
     return obj
 
-def save_stl(openscad, scadfn, stlfn):
+def save_stl(openscad, scadfn, stlfn, lazy=True):
+    if os.path.exists(stlfn) and lazy:
+        return
     cmd = "%s -m make -o %s %s" % (openscad, stlfn, scadfn)
     msg = "executing '%s'" % cmd
     logger.info(msg)
     os.system(cmd)
 
-def save_dxf(openscad, scadfn, dxffn):
+def save_dxf(openscad, scadfn, dxffn, lazy=True):
+    if os.path.exists(dxffn) and lazy:
+        return
     cmd = "%s -m make -o %s %s" % (openscad, stlfn, dxffn)
     msg = "executing '%s'" % cmd
     logger.info(msg)
     os.system(cmd)
 
-def save_png(openscad, scadfn, pngfn):
+def save_png(openscad, scadfn, pngfn, lazy=True):
+    if os.path.exists(pngfn) and lazy:
+        return
     cmd = "%s -o %s %s" % (openscad, pngfn, scadfn)
     msg = "executing '%s'" % cmd
     logger.info(msg)
     os.system(cmd)
 
-def save_scad(scad, scadfn):
+def save_scad(scad, scadfn, lazy=True):
+    if os.path.exists(scadfn) and lazy:
+        return
     msg = "saving %s" % scadfn
     logger.info(msg)
     scad = scad_render(scad)
