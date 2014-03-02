@@ -57,11 +57,25 @@ def load_json(json_fn):
     msg = "loading %s" % json_fn
     logger.info(msg)
     with open(json_fn) as fh:
-        obj = json.load(fh)
+        content = fh.read()
+    content = str.join('', [line.strip() for line in content.split('\n')])
+    obj = json.loads(content)
     return obj
 
-def save_stl(scadfn, stlfn):
-    cmd = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -m make -o %s %s" % (stlfn, scadfn)
+def save_stl(openscad, scadfn, stlfn):
+    cmd = "%s -m make -o %s %s" % (openscad, stlfn, scadfn)
+    msg = "executing '%s'" % cmd
+    logger.info(msg)
+    os.system(cmd)
+
+def save_dxf(openscad, scadfn, dxffn):
+    cmd = "%s -m make -o %s %s" % (openscad, stlfn, dxffn)
+    msg = "executing '%s'" % cmd
+    logger.info(msg)
+    os.system(cmd)
+
+def save_png(openscad, scadfn, pngfn):
+    cmd = "%s -o %s %s" % (openscad, pngfn, scadfn)
     msg = "executing '%s'" % cmd
     logger.info(msg)
     os.system(cmd)

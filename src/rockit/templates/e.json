@@ -1,0 +1,8 @@
+{
+    "engine": {
+        "type": "e_engine"
+    },
+    "name": "e_engine",
+    "build": ["all"]
+}
+
