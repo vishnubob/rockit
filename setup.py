@@ -4,7 +4,7 @@ from distutils.core import setup, Extension
 
 rockit = {
     "name": "rockit",
-    "description": "Model rocket generator",
+    "description": "model rocket generator",
     "author":"Giles Hall",
     "packages": ["rockit", "rockit.solid"],
     "package_dir": {"rockit": "src/rockit"},

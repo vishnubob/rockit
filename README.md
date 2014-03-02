@@ -1,7 +1,66 @@
 Rockit
 ======
 
-Rockit is a set of tools to generate 3D models of working model rockets.  Using [OpenSCAD](http://www.openscad.org/ OpenSCAD), Rockit can generate parts of a rocket and export them to DXF or STL, suitable for manufacturing on a wide range of CNC platforms.  Using a rockit generated 3D model and a 3D printer, you can design, print and fly your rocket in about two hours.  
+Rockit provides a framework to rapidly generate 3D models of workable model rockets.  It leverages [OpenSCAD](http://www.openscad.org/ OpenSCAD) to render rocket part specificiations to three dimensional models. This allows you the ability to configure and generate individual model rocket parts suitable for manufacturing on a wide range of 3D printing platforms.  With carefully configured paramaters, you can design, print and fly your rocket in under two hours.  Rockit parses JSON rocket configuration files and writes out to a variety of formats including .json, .scad, .stl, .dxg, .png.   It ships with a variety of default templates based on different engine sizes, but these will require local tuning for proper operation.  
+
+Requirements
+------------
+Rockit requires [OpenSCAD](http://www.openscad.org/downloads.html), [Python](http://www.python.org/download/).  [SolidPython](https://github.com/SolidCode/SolidPython) is baked into the distribution, because rockit requires the development branch.  This might change at some point.
+
+Getting Started
+---------------
+### Step 1: download and install rockit
+Use pip to install the rockit package by executing the following command, ideally in a fresh [virtual environment](https://pypi.python.org/pypi/virtualenv):
+'''javascript
+$ pip install https://github.com/vishnubob/rockit/archive/master.zip
+'''
+You can also [download](https://github.com/vishnubob/rockit/archive/master.zip) the package directly and install it by hand.
+
+### Step 2: Build a "mini" template, with images
+
+```jacascript
+$ atlas.py -t mini -p
+```
+
+This command will create a directory called "mini_engine" and it will save images for all the parts that make up a mini rocket.  Look for "mini_engine/mini_engine.json" file, this is the full JSON configuration for this template.  You can copy this file, and tweak your rocket design based on this template.  Some parameters are based on other parameters, which is why these parameters have null values in the JSON config file.  With the config file, you can provide values, and these will override the automatic assignment.
+
+```jacascript
+$ cp mini_engine/mini_engine.json my_mini_engine.json
+```
+
+Open your favorite editor and edit the "my_mini_engine.json" file.  Scroll down to the bottom of the file, and look for the section that defines the tail section.  It should look something like this:
+
+
+'''javascript
+   "tail": {
+       "fin_count": 4
+   }
+'''
+
+Let's increase the number of fins in our tail section from four to eight:
+
+'''javascript
+   "tail": {
+       "fin_count": 8
+   }
+'''
+
+Save this config, and run atlas on our new config file:
+
+```jacascript
+$ atlas.py -i my_mini_engine.json -p
+```
+
+What does the Fin image look like now?
+
+
+
+
+
+
+
+
+
 
 Configurable Rockit Parts
 -------------------------
@@ -21,35 +80,6 @@ You can configure everything about your fins: two wide fins, with a 1.2 degree t
 All the common rocket engines and diameters are baked in, making it easy to choose a rocket engine for your design.  The rocket engine holder is designed as a compression fit.  All you have to do is print it, stuff a rocket engine in, and launch it!
 ### Multiple Stages
 You can link tail parts together to create your own multi-stage rocket.
-
-Output Formats
---------------
-1. .STL
-2. .DXF
-3. .PNG
-
-Requirements
-------------
-Rockit requires [OpenSCAD](http://www.openscad.org/downloads.html), [Python](http://www.python.org/download/).  Right now, [SolidPython](https://github.com/SolidCode/SolidPython) is baked into the distribution, because it currently requires the development branch.
-
-Getting Started
----------------
-### Step 1: Download Rockit
-[Download Rockit](https://github.com/vishnubob/rockit/archive/master.zip), unpack the archive if necessary
-
-### Step 2: Fire up OpenSCAD
-Unzip master.zip and open a terminal.  Change your directory to the archive contents, and install the python package:
-```jacascript
-python setup.py install
-```
-
-### Step 3: Build a "mini" template, with images
-
-```jacascript
-atlas.py -t mini -p
-```
-
-This command will build out all the parts that make up a mini rocket, and save .PNG images for all parts.  It will also save a full config file for "mini.json" file, which you can copy and configure to your specifications.
 
 Resources for Learning More
 ---------------------------
