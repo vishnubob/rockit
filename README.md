@@ -51,10 +51,6 @@ atlas.py -t mini -p
 
 This command will build out all the parts that make up a mini rocket, and save .PNG images for all parts.  It will also save a full config file for "mini.json" file, which you can copy and configure to your specifications.
 
-now edit and use to 
-Open up OpenSCAD and load [scad/stub.scad](https://github.com/vishnubob/rockit/blob/master/scad/stub.scad)
-<img src="http://i.imgur.com/C7UpA5E.png" alt="Step 1" style="width: 600px;"/>
-
 Resources for Learning More
 ---------------------------
 - To get a feel of how to configure your own rockit, check out [scad/rockit.scad](https://github.com/vishnubob/rockit/blob/master/scad/rockit.scad)
