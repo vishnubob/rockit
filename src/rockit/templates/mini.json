@@ -1,0 +1,8 @@
+{
+    "engine": {
+        "type": "mini_engine"
+    },
+    "name": "mini_engine",
+    "build": ["all"]
+}
+

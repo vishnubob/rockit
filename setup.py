@@ -6,23 +6,11 @@ rockit = {
     "name": "rockit",
     "description": "Model rocket generator",
     "author":"Giles Hall",
-    "packages": ["rockit"],
-    "package_dir": {
-                    "rockit": "src", 
-                    },
-    "py_modules":[
-                    "rockit.__init__", 
-                    "rockit.rockit", 
-                    "rockit.assemble", 
-                    "rockit.nosecone", 
-                    "rockit.utils", 
-                    "rockit.parts", 
-                ],
-    "scripts":[
-                "scripts/chute.py",
-                "scripts/atlas.py",
-               ],
-    "version": "0.1",
+    "packages": ["rockit", "rockit.solid"],
+    "package_dir": {"rockit": "src/rockit"},
+    "package_data": {'rockit': ['templates/*.json']},
+    "scripts":["scripts/chute.py", "scripts/atlas.py"],
+    "version": "0.5",
 }
 
 if __name__ == "__main__":

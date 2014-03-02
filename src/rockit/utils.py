@@ -1,12 +1,15 @@
 # Rockit - Model Rocket Construction Kit
 # Giles Hall (C) 2013
 import math
+import json
 import os
 from solid import *
+import logging
+logger = logging.getLogger(__name__)
 
 def tube(name, height, outer_dia, inner_dia, segments=None):
     msg = "Tube [%s]: Dia: inner=%.4f outer=%.4f, Height: %.4f" % (name, inner_dia, outer_dia, height)
-    print msg
+    logger.debug(msg)
     return difference() (
         cylinder(h=height, r=outer_dia / 2.0, segments=segments),
         cylinder(h=height, r=inner_dia / 2.0, segments=segments)
@@ -14,7 +17,7 @@ def tube(name, height, outer_dia, inner_dia, segments=None):
 
 def tube2(name, height, outer_dia1, inner_dia1, outer_dia2, inner_dia2, segments=None):
     msg = "Tube2 [%s]: Dia1: inner=%.4f outer=%.4f, Dia2: inner=%.4f outer=%.4f, Height: %.4f" % (name, inner_dia1, outer_dia1, inner_dia2, outer_dia2, height)
-    print msg
+    logger.debug(msg)
     return difference() (
         cylinder(h=height, r1=outer_dia1 / 2.0, r2=outer_dia2 / 2.0, segments=segments),
         cylinder(h=height, r1=inner_dia1 / 2.0, r2=inner_dia2 / 2.0, segments=segments),
@@ -44,25 +47,32 @@ def render_crosshairs(length=25, width=1, height=1, rad=2):
         ])
     return scad
 
+def save_json(obj, json_fn):
+    msg = "saving %s" % json_fn
+    logger.info(msg)
+    with open(json_fn, 'w') as fh:
+        json.dump(obj, fh, sort_keys=True, indent=4, separators=(',', ': '))
+
+def load_json(json_fn):
+    msg = "loading %s" % json_fn
+    logger.info(msg)
+    with open(json_fn) as fh:
+        obj = json.load(fh)
+    return obj
+
 def save_stl(scadfn, stlfn):
-    msg = "Converting SCAD to STL: %s -> %s" % (scadfn, stlfn)
-    print msg
     cmd = "/Applications/OpenSCAD.app/Contents/MacOS/OpenSCAD -m make -o %s %s" % (stlfn, scadfn)
+    msg = "executing '%s'" % cmd
+    logger.info(msg)
     os.system(cmd)
 
 def save_scad(scad, scadfn):
-    msg = "Generating SCAD file: %s" % scadfn
-    print msg
+    msg = "saving %s" % scadfn
+    logger.info(msg)
     scad = scad_render(scad)
     f = open(scadfn, 'w')
     f.write(scad)
     f.close()
-
-def save(scad, name):
-    scadfn = name + ".scad"
-    stlfn = name + ".stl"
-    save_scad(scad, scadfn)
-    save_stl(scadfn, stlfn)
 
 def in2mm(inches):
     return inches / 0.0393701
@@ -106,3 +116,51 @@ def chute_velocity(mass, diameter, drag=0.75, gravity=9.8, air_density=1.22):
             drag: drag coefficient for chute
     """
     return math.sqrt((8 * mass * gravity) / (math.pi * air_density * drag * diameter ** 2))
+
+
+_parts = []
+def scan_parts():
+    if not _parts:
+        from . import parts
+        for name in dir(parts):
+            if name in ["Rockit", "RockitPart"]:
+                continue
+            thing = getattr(parts, name, None)
+            try:
+                if issubclass(thing, parts.RockitPart):
+                    _parts.append(thing)
+            except TypeError:
+                continue
+    return _parts
+
+# scan for rocket parts
+def get_part(name):
+    parts = scan_parts()
+    for part in parts:
+        if name in part.names:
+            return part
+    raise KeyError, "Unknown rocket part: %s" % name
+
+# http://stackoverflow.com/questions/377017/test-if-executable-exists-in-python
+def which(program):
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
+
+# http://stackoverflow.com/questions/1724693/find-a-file-in-python
+def find(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)

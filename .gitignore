@@ -4,3 +4,5 @@ stl/*
 *.swp
 *DS_Store*
 build
+attic
+env

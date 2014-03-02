@@ -3,48 +3,49 @@
 from solid import *
 from . rockit import *
 from . nosecone import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 CIRCLE_SEGMENTS = 200
 
 class RockitEngine(RockitPart):
     Name = 'engine'
 
-    EngineDefaults = {
+    Defaults = {
         "fit": 1.02,
         "gap": in2mm(.5)
     }
 
-    def __init__(self, **kw):
-        _dct = self.EngineDefaults.copy()
+    EngineTypes = {
+        "mini_engine": {
+            "fit": 1.08,
+            "height": in2mm(1.75),
+            "dia": in2mm(.5),
+        },
+        "standard_engine": {
+            "fit": 1.08,
+            "height": in2mm(2.75),
+            "dia": in2mm(.69),
+        },
+        "d_engine": {
+            "height": in2mm(2.75),
+            "dia": in2mm(.95),
+        },
+        "e_engine": {
+            "height": in2mm(3.75),
+            "dia": in2mm(.69),
+        },
+    }
+
+    def __init__(self, rocket, **kw):
+        _dct = kw.copy()
+        if "type" in kw:
+            engine_type = _dct["type"]
+            engine_conf = self.EngineTypes[engine_type]
+            _dct.update(engine_conf)
         _dct.update(kw)
-        _dct.update(self.Defaults)
-        super(RockitEngine, self).__init__(**_dct)
-
-class Rockit_Mini_Engine(RockitEngine):
-    Defaults = {
-        "fit": 1.08,
-        "height": in2mm(1.75),
-        "dia": in2mm(.5),
-    }
-
-class Rockit_Standard_Engine(RockitEngine):
-    Defaults = {
-        "fit": 1.08,
-        "height": in2mm(2.75),
-        "dia": in2mm(.69),
-    }
-
-class Rockit_D_Engine(RockitEngine):
-    Defaults = {
-        "height": in2mm(2.75),
-        "dia": in2mm(.95),
-    }
-
-class Rockit_E_Engine(RockitEngine):
-    Defaults = {
-        "height": in2mm(3.75),
-        "dia": in2mm(.69),
-    }
+        super(RockitEngine, self).__init__(rocket, **_dct)
 
 class RockitEngineMount(RockitPart):
     Name = 'engine_mount'
@@ -91,7 +92,7 @@ class RockitEngineMount(RockitPart):
     def firewall_outer_dia(self):
         return self.rocket.body.outer_dia
 
-    def build(self):
+    def render_scad(self):
         # assume we have been translated to the correct height (collar, offset, etc)
         return union()(
             # engine mount taper
@@ -136,7 +137,7 @@ class RockitCollar(RockitPart):
     def outer_dia(self):
         return self.rocket.body.inner_dia * self.fit
 
-    def build(self):
+    def render_scad(self):
         scad = union()(
             translate([0, 0, self.rocket.body.height - self.overlap])(
                 tube2("collar", self.overlap, self.rocket.body.outer_dia, self.rocket.body.inner_dia, self.outer_dia, self.inner_dia, self.rocket.constants.circle_segments)
@@ -174,7 +175,7 @@ class RockitLaunchLug(RockitPart):
     def outer_dia(self):
         return self.inner_dia + self.rocket.body.width
 
-    def build(self):
+    def render_scad(self):
         x_offset = self.rocket.body.outer_dia / 2.0 + self.inner_dia / 2.0
         scad = translate([x_offset, 0, 0])(
             tube("launchlug", self.height, self.outer_dia, self.inner_dia, self.rocket.constants.circle_segments)
@@ -238,7 +239,7 @@ class RockitFin(RockitPart):
             [self.inner_dia / 2.0, -self.width / 2.0 - self.deflection, self.height],
         ]
 
-    def build(self):
+    def render_scad(self):
         scad = polyhedron(points=self.points, triangles=self.triangles)
         return scad
 
@@ -248,36 +249,36 @@ class RockitTail(RockitPart):
         "fin_count": 4,
     }
 
-    def build(self):
+    def render_scad(self):
         parts = []
         # rocket body 
-        parts.append(self.rocket.body.build())
+        parts.append(self.rocket.body.render_scad())
         # engine mount
-        parts.append(self.rocket.engine_mount.build())
+        parts.append(self.rocket.engine_mount.render_scad())
         # fins
         for finidx in range(self.fin_count):
             z_angle = finidx * (360.0 / self.fin_count)
-            part = rotate([0,0,z_angle])( self.rocket.fin.build() )
+            part = rotate([0,0,z_angle])( self.rocket.fin.render_scad() )
             parts.append(part)
         # launch lug
         z_angle = (360.0 / self.fin_count) / 2.0
-        part = rotate([0,0,z_angle])( self.rocket.launchlug.build() )
+        part = rotate([0,0,z_angle])( self.rocket.launchlug.render_scad() )
         parts.append(part)
         return union()(parts)
 
 class RockitCollarTest(RockitPart):
     Name = 'collar_test'
 
-    def build(self):
+    def render_scad(self):
         return union()(
             union()(
-                self.rocket.body.build(),
-                self.rocket.collar.build(),
+                self.rocket.body.render_scad(),
+                self.rocket.collar.render_scad(),
             ),
             translate([self.rocket.body.outer_dia * 1.1,0,0]) (
                 union()(
-                    self.rocket.body.build(),
-                    self.rocket.collar.build(),
+                    self.rocket.body.render_scad(),
+                    self.rocket.collar.render_scad(),
                 )
             )
         )
@@ -303,10 +304,10 @@ class RockitBody(RockitPart):
     def outer_dia(self):
         return self.rocket.body.inner_dia + self.rocket.body.width
 
-    def build(self):
+    def render_scad(self):
         return union()(
             tube("body", self.height, self.outer_dia, self.inner_dia, self.rocket.constants.circle_segments),
-            self.rocket.collar.build(),
+            self.rocket.collar.render_scad(),
         )
 
 class RockitConstants(RockitPart):
@@ -349,10 +350,8 @@ class RockitNosecone(RockitPart):
     def mount_height(self):
         return self.rocket.collar.height + 1
 
-    def build(self):
+    def render_scad(self):
         points = elliptical_nosecone_func(height=self.height, width=self.width, diameter=self.outer_dia, steps=self.steps)
-        import pprint
-        pprint.pprint(points)
         #return rotate_extrude(convexity=10, segments=self.rocket.constants.circle_segments)( rotate([0, 0, -90])( polygon(points)))
         return union()(
             rotate_extrude(convexity=10, segments=self.rocket.constants.circle_segments)( rotate([0, 0, -90])( polygon(points))),

@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 import math
 from solid import *
+import logging
+
+logger = logging.getLogger(__name__)
 
 def conical_nosecone_func(x=1, R=1, L=1, steps=100):
     # http://en.wikipedia.org/wiki/Nose_cone_design#Conical
