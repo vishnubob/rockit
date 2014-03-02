@@ -1,0 +1,72 @@
+{
+    "body": {
+        "height": null,
+        "inner_dia": null,
+        "outer_dia": null,
+        "width": 2.5
+    },
+    "build": [
+        "tail"
+    ],
+    "collar": {
+        "chamfer_height": 1,
+        "fit": 0.985,
+        "height": 8.889995199402593,
+        "inner_dia": null,
+        "outer_dia": null,
+        "overlap": null
+    },
+    "collar_test": {},
+    "constants": {
+        "circle_segments": 200,
+        "min_overlap": 0.001
+    },
+    "engine": {
+        "dia": 12.699993142003704,
+        "fit": 1.08,
+        "gap": 12.699993142003704,
+        "height": 44.44997599701296,
+        "type": "mini_engine"
+    },
+    "engine_mount": {
+        "firewall_height": null,
+        "firewall_inner_dia": null,
+        "firewall_outer_dia": null,
+        "height": null,
+        "inner_dia": null,
+        "outer_dia": null,
+        "taper_height": null,
+        "tube_height": null
+    },
+    "fin": {
+        "coverage": 0.8,
+        "deflection": 0,
+        "endchord": null,
+        "height": null,
+        "inner_dia": null,
+        "outer_dia": null,
+        "points": null,
+        "ratio": 0.5,
+        "triangles": null,
+        "width": null
+    },
+    "launchlug": {
+        "fit": 1.55,
+        "height": 50.799972568014816,
+        "inner_dia": null,
+        "outer_dia": null,
+        "rod_dia": 3.174998285500926
+    },
+    "name": "rocket",
+    "nosecone": {
+        "height": null,
+        "inner_dia": null,
+        "mount_height": null,
+        "outer_dia": null,
+        "steps": 100,
+        "width": null
+    },
+    "tail": {
+        "fin_count": 8
+    }
+}

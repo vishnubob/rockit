@@ -1,0 +1,5 @@
+{
+    "engine": {"type": "mini_engine"},
+    "tail": {"fin_count": 8},
+    "build": ["tail"]
+}
