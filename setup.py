@@ -9,7 +9,7 @@ rockit = {
     "packages": ["rockit", "rockit.solid"],
     "package_dir": {"rockit": "src/rockit"},
     "package_data": {'rockit': ['templates/*.json']},
-    "scripts":["scripts/chute.py", "scripts/atlas.py"],
+    "scripts":["scripts/calculate_chute", "scripts/atlas"],
     "version": "0.5",
 }
 
