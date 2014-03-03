@@ -50,7 +50,7 @@ def save_rocket(args, rocket):
             png_path = os.path.join(args.output_dir, "%s_%s.png" % (rocket.name, part_name))
             utils.save_png(args.openscad_exe, scad_path, png_path)
         if args.export_dxf:
-            png_path = os.path.join(args.output_dir, "%s_%s.dxf" % (rocket.name, part_name))
+            dxf_path = os.path.join(args.output_dir, "%s_%s.dxf" % (rocket.name, part_name))
             utils.save_dxf(args.openscad_exe, scad_path, dxf_path)
 
 def check_scad_exe(args):

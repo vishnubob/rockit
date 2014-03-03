@@ -75,15 +75,19 @@ def save_stl(openscad, scadfn, stlfn, lazy=True):
 def save_dxf(openscad, scadfn, dxffn, lazy=True):
     if os.path.exists(dxffn) and lazy:
         return
-    cmd = "%s -m make -o %s %s" % (openscad, stlfn, dxffn)
+    cmd = "%s -m make -o %s %s" % (openscad, dxffn, scadfn)
     msg = "executing '%s'" % cmd
     logger.info(msg)
     os.system(cmd)
 
-def save_png(openscad, scadfn, pngfn, lazy=True):
+def save_png(openscad, scadfn, pngfn, lazy=True, make=True):
     if os.path.exists(pngfn) and lazy:
         return
-    cmd = "%s -o %s %s" % (openscad, pngfn, scadfn)
+    cmd = [openscad]
+    if make:
+        cmd.append("-m make")
+    cmd.append("-o %s %s" % (pngfn, scadfn))
+    cmd = str.join(' ', cmd)
     msg = "executing '%s'" % cmd
     logger.info(msg)
     os.system(cmd)
