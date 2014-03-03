@@ -6,4 +6,4 @@ Rockit provides a framework to rapidly generate 3D models of workable model rock
 
 # Video #
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=abhvpGUcD30" target="_blank"><img src="http://img.youtube.com/vi/abhvpGUcD30/0.jpg" alt="video of spin rocket" width="240" height="180" border="10" /></a>
+<iframe width="560" height="315" src="//www.youtube.com/embed/abhvpGUcD30" frameborder="0" allowfullscreen></iframe>
