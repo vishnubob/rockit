@@ -10,7 +10,7 @@ rockit = {
     "package_dir": {"rockit": "src/rockit"},
     "package_data": {'rockit': ['templates/*.json']},
     "scripts":["scripts/calculate_chute", "scripts/atlas"],
-    "version": "0.5",
+    "version": "1.0",
 }
 
 if __name__ == "__main__":
