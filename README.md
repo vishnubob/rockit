@@ -4,7 +4,7 @@ Rockit provides a framework to rapidly generate 3D models of workable model rock
 
 ### For more information, check out the [wiki](https://github.com/vishnubob/rockit/wiki/Rockit) and the [instructable](http://www.instructables.com/id/Rockit-Model-Rocket-Construction-Kit/). ###
 
-<img src="https://raw.github.com/vishnubob/rockit/master/examples/images/print_ex1.png" alt="rocket print" width="256">
+<img src="https://raw.github.com/vishnubob/rockit/master/examples/images/print_ex1.jpg" alt="rocket print" width="256">
 
 # Video #
 
