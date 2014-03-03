@@ -1,0 +1,86 @@
+solid OpenSCAD_Model
+  facet normal 0 1 0
+    outer loop
+      vertex 19.6645 0.625 71.2216
+      vertex 68.8275 0.625 26.7081
+      vertex 19.6645 0.625 0
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 19.6645 0.625 0
+      vertex 68.8275 0.625 26.7081
+      vertex 68.8275 0.625 0
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 19.6645 0.625 0
+      vertex 68.8275 0.625 0
+      vertex 19.6645 -0.625 0
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 19.6645 -0.625 0
+      vertex 68.8275 0.625 0
+      vertex 68.8275 -0.625 0
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 68.8275 -0.625 0
+      vertex 68.8275 0.625 0
+      vertex 68.8275 0.625 26.7081
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 68.8275 -0.625 26.7081
+      vertex 68.8275 -0.625 0
+      vertex 68.8275 0.625 26.7081
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 19.6645 -0.625 71.2216
+      vertex 19.6645 0.625 71.2216
+      vertex 19.6645 -0.625 0
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 19.6645 -0.625 0
+      vertex 19.6645 0.625 71.2216
+      vertex 19.6645 0.625 0
+    endloop
+  endfacet
+  facet normal 0.671184 0 0.741291
+    outer loop
+      vertex 19.6645 -0.625 71.2216
+      vertex 68.8275 -0.625 26.7081
+      vertex 68.8275 0.625 26.7081
+    endloop
+  endfacet
+  facet normal 0.671184 0 0.741291
+    outer loop
+      vertex 19.6645 0.625 71.2216
+      vertex 19.6645 -0.625 71.2216
+      vertex 68.8275 0.625 26.7081
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 19.6645 -0.625 0
+      vertex 68.8275 -0.625 0
+      vertex 68.8275 -0.625 26.7081
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 19.6645 -0.625 71.2216
+      vertex 19.6645 -0.625 0
+      vertex 68.8275 -0.625 26.7081
+    endloop
+  endfacet
+endsolid OpenSCAD_Model
